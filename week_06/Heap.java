@@ -5,6 +5,7 @@ public class Heap {
 	private int maxSize; // 최대 노드 개수
 	private int heap[]; // Heap(배열 표현)
 
+	// heap constructor
 	public Heap() {
 		nNode = 0;
 		maxSize = 5;
