@@ -4,24 +4,24 @@ public class Heap {
 	private int nNode; // Heap에 저장된 노드의 개수
 	private int maxSize; // 최대 노드 개수
 	private int heap[]; // Heap(배열 표현)
-	
+
 	public Heap() {
 		nNode = 0;
 		maxSize = 5;
 		heap = new int[maxSize];
 	}
-	
+
 	private void heapFull() {
 		maxSize++; // 저장 공간 한도 1 증가
 		int tempHeap[] = new int [maxSize]; // 확장한 최댓값을 갖는 배열 선언
-		
+
 		for(int i=0; i<maxSize-1;i++) {
 			tempHeap[i] = heap[i]; // 데이터 복사
 		}
-		
+
 		heap= tempHeap; // 확장한 tempHeap을 heap에 저장
 	}
-	
+
 	public void insert(int item) {
 		if( nNode == maxSize) { // 추가하려 했더니 이미 heap이 가득 찬 경우 heap 확장 절차 시행
 			heapFull();
@@ -40,9 +40,10 @@ public class Heap {
 			}
 		}
 
-		
+
 	}
-	
+
+	// heap delete
 	public int delete() {
 		if(nNode == 0) {
 			System.out.println("공백트리입니다.");
@@ -70,7 +71,7 @@ public class Heap {
 			return item;
 		}
 	}
-	
+
 	public void show() {
 		for (int i=1; i<=nNode; i++) {
 			System.out.print(heap[i] + " | ");
