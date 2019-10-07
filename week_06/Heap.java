@@ -22,6 +22,7 @@ public class Heap {
 		heap= tempHeap; // 확장한 tempHeap을 heap에 저장
 	}
 
+	// heap insert
 	public void insert(int item) {
 		if( nNode == maxSize) { // 추가하려 했더니 이미 heap이 가득 찬 경우 heap 확장 절차 시행
 			heapFull();
