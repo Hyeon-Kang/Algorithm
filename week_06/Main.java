@@ -15,11 +15,11 @@ public class Main {
 		h.insert(19);
 		h.show();
 		
-//		System.out.println("===Delete===");
-//		h.delete();
-//		h.show();
-//		h.delete();
-//		h.show();
+		System.out.println("===Delete===");
+		h.delete();
+		h.show();
+		h.delete();
+		h.show();
 	}
 
 }
