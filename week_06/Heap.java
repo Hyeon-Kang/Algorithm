@@ -10,6 +10,34 @@ public class Heap {
 		maxSize = 5;
 		heap = new int[maxSize];
 	}
+	
+	public Heap(int[] tree) {
+		nNode = tree.length -1;
+		maxSize = tree.length;
+		heap = tree;
+		
+		int p, temp;
+		
+			
+			for(int i = (this.nNode/2); i>=1; i--) { // 트리의 중간 레벨로 이동
+				
+				p = i;
+				for (int j = 2*p; j<= this.nNode; j = 2*j) { 
+					// 해당 노드의 자식으로 이동, 이동한 노드가 가장 마지막 노드보다 인덱스가 작다면 그 자식 노드로 이동
+					if(j < this.nNode) { // 이동했는데 아직 마지막 인덱스가 아니라면
+						if(this.heap[j] < this.heap[j+1]) j++; // +1 (왼쪽에서 오른쪽 노드로 이동)
+					}
+					if(this.heap[p] >= this.heap[j]) { // 자식 노드가 부모보다 큰 경우 (정상이므로 절차 통과)
+						return; // or break;
+					}
+					temp = this.heap[p];
+					this.heap[p] = this.heap[j];
+					this.heap[j] = temp;
+					p = j; // 자식과 부모 swap
+				}
+			}
+		
+	}
 
 	private void heapFull() {
 		maxSize++; // 저장 공간 한도 1 증가

@@ -20,6 +20,13 @@ public class Main {
 		h.show();
 		h.delete();
 		h.show();
+		
+		System.out.println("===MakeHeap===");
+		
+		int[] tree = {0,20,40,50,70,30,100,80,10,90,60};
+		
+		Heap nh = new Heap(tree);
+		nh.show();
 	}
 
 }
