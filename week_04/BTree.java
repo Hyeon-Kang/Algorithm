@@ -102,86 +102,115 @@ public class BTree {
 		Stack<TreeNode> stack = new Stack<TreeNode>(); //스택 초기화
 		TreeNode p = root; // 트리노드 p에  해당 메소드 사용 트리의 root 노드 연결
 		
+		// # 스택에 루트를 입력
 		if( p != null) { // 노드가 공백이 아닌 경우
 			stack.push(p); // stack에 p push  -> |p|
 		}
 		
+		// # 스택이 비워질 때 까지 반복
 		while(stack.isEmpty() != true) { // 공백 스택이 아닐 때
-			if(p != null) { // p 역시 공백 노드가 아닌 경우
-				p = stack.peek(); // 스택에서 맨 위에 있는 데이터 읽기 (루트부터 접근)
+			if(p != null) { // p 역시 노드가 아닌 경우
+				p = stack.peek(); // # 스택 최상단 노드 데이터 출력 // 최초 접근 시 공백 출력
 				
-				p = p.left; // p 의 초점을 좌측 서브노드로 이동
-				while(p != null) { // 왼쪽 트리 순회
+				p = p.left; // # p 의 초점을 좌측 서브노드로 이동
+				
+				while(p != null) { // # 왼쪽 트리 끝까지 순회 (null 찾기)
 					stack.push(p); // -> |p|p.left|
-					p = p.left; // 좌측 서브노드를 탐색하기 위해 이동 
-					// (다음 순환에서 p=p.left 가 null로 판정된 경우 stack에 들은 |p.left|의 데이터를 읽고 탈출
 					
+					p = p.left;
 				}
 			}
 			
 			p = stack.pop(); // 스택의 좌측트리 데이터 pop  -> |p|
-			System.out.print(p.item + " ");
-			
-			// 우측 데이터
-			p = p.right;
+			System.out.print(p.item + " "); //노드 데이터 출력
+			p = p.right; // # 우측 서브노드로 이동
 			if(p != null) { 
-				stack.push(p); 
+				stack.push(p); // # 우측 끝 탐색
 			}
 		}		
 	}
 	
-	// 전위순회 (루트 먼저 방문)
-	public void iterPreoder() {
-		Stack<TreeNode> stack = new Stack<TreeNode> ();
-		TreeNode p = root;
-		
-		
-		if(p != null) {
-			stack.push(p);
-		}
-		
-		while(stack.isEmpty() != true) {
-			if(p != null) {
-				p = stack.peek(); // 스택 데이터 읽기
-				
-			}
-		}
-		
-	}
-	
+	// 전위순회 (루트 먼저 방문) 
 	
 	// root.item -> root.left -> root.right
 	public void iterPreorder() {
-		Stack<TreeNode> stack = new Stack<TreeNode>(); // 스택 초기화
-		TreeNode p = root; // 임시노드 p에 this.root 복사
-		
-		// root node부터 접근
+		Stack<TreeNode> stack = new Stack<TreeNode>();
+		TreeNode p = root;
+		// 트리노드 p 에 root 전달 (포인터 이동)
 		if (p != null) {
-			stack.push(p); // 스택에 루트 노드 저장
+			stack.push(p); // p에 데이터가 있다면 스택에 저장
 		}
 		
-		// 공백 스택이 아닌경우
 		while (stack.isEmpty() != true) {
 			
 			
-			// root 부터 접근해야 하므로 들어있는 데이터 꺼내기
+			// 데이터 꺼내면서 출력
 			p=stack.pop();
 			System.out.print(p.item + " ");
 
-			// 스택이 FIFO 특성임을 감안하여 오른쪽 자식부터 집어넣는다. 
-			// (꺼낼 때는 나중에 넣은 왼쪽부터 나오게!) 
+			// 우측 순회
 			if (p.right!=null) {
+				
 				stack.push(p.right);
 			}
-			
-			// 우측 서브노드
+			// 좌측 순회
 			if (p.left!=null) {
+				
 				stack.push(p.left);
 			}
 		}
 
 	}
 
+	
+	public BTree copy() {
+		BTree temp = new BTree();
+		temp.root = theCopy(this.root);
+		
+		
+		return temp;
+	}
+	
+	private TreeNode theCopy(TreeNode T) {
+		// 공백트리시 바로 null 반환
+		if (T == null) {
+			return null;
+		} else {
+			// 임시로 저장할 노드 선언
+			TreeNode temp = new TreeNode();
 
+			// 좌측, 우측, 저장 데이터 순
+			temp.left = theCopy(T.left);
+			temp.right = theCopy(T.right);
+			temp.item = T.item;
+			return temp; // 결과 반환
+		}
+	}
+	
+	public boolean equals (BTree S) {
+		return theEquals(this.root, S.root);
+	}
+	
+	public boolean theEquals(TreeNode S, TreeNode T) {
+		
+		// 두 트리가 모두 공백트리인 경우 바로 true 반환
+		if (S == null && T == null) {
 
-}
+			return true;
+			
+		// 둘 다 null이 아닌 경우 순차적으로 재귀 접근
+		} else if (S != null && T != null) {
+			
+			if (S.item==T.item) {
+				
+				// 내부 item이 같은 경우 재귀적 접근을 통한 좌우 순차 탐색
+				return theEquals(S.left, T.left) && theEquals(S.right, T.right);
+			}						
+		}
+		// 모두 해당이 없다면 false 반환
+		return false;
+	}
+	
+	
+
+}// end BTree
