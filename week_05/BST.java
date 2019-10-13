@@ -34,76 +34,110 @@ public class BST {
 			return searchBST(p.left, item); // 반대의 경우 좌측 순회
 		}
 	} // end searchBST
+
 	
-	// 트리에 원소 추가
+	// 원소를 삽입하는 메소드
 	public void insert(int item) {
-		TreeNode p = this.root; // 포인터 1
-		TreeNode q = new TreeNode(); // 포인터 2
+		// 트리를 이동할때 사용하는 2개의 포인터
+		TreeNode p = this.root;
+		TreeNode q = new TreeNode();
 		
-		while(p != null)  { // 적합한 자리 탐색 순환
-			if(p.item == item) return; // 삽입하려 할 원소가 이미 트리에 있는 경우 처리
+		// 공백 트리가 아니라면
+		// 트리에 삽입하려는 원소가 있는지 검사한다.
+		while(p != null) {
+			if(item == p.item) {
+				return;
+			}
+			// q는 p의 부모 노드(한 레벨 위)를 가르킨다.
 			q = p;
 			if(item < p.item) {
-				p = p.left; // 좌측 노드 확인
+				p = p.left;
 			} else {
-				p = p.right; // 우측 노드 확인
+				p = p.right;
 			}
-		} // end while
-		
-		TreeNode temp = new TreeNode();
-		temp.item = item;
-		temp.right = null;
-		temp.left = null;
-		
-		if(this.root == null) {
-			root = temp; // 공백트리인 경우 바로 삽입
-		} else if(item <q.item) {
-			q.left = temp; // 노드의 왼쪽 서브노드에 삽입
-		} else {
-			q.right = temp; // 목표 노드의 오른쪽 서브노드에 삽입
 		}
-	}// end insert
-	
+		
+		// 삽입할 새로운 노드를 만든다.
+		TreeNode NewNode = new TreeNode();
+		NewNode.item = item;
+		NewNode.right = null;
+		NewNode.left = null;
+		
+		// 공백 트리면 바로 삽입한다.
+		if(this.root == null) {
+			this.root = NewNode;
+		// q는 탐색 종료 후의 원소
+		} else if(item < q.item) {
+			q.left = NewNode;
+		} else {
+			q.right = NewNode;
+		}
+	}
+
+
+	// 삭제
 	public void delete(int item) {
 		deleteBST(this.root, item);
 	}
-	
-	// 데이터 삭제가 관련되었으므로 private와 접근 메소드로 분리해놓음.
 	private void deleteBST(TreeNode root, int item) {
-			TreeNode p = root; // 키값 item을 가진 노드
-			TreeNode parent = p; // 삭제할 노드의 부모노드
-			TreeNode q = null; // 삭제할 원소가 없음
-			
-			// p가 리프노드인 경우 (차수 0)
-			if( (p.left == null) && (p.right == null) )
-					if (parent.left == p) {
-						parent.left = null;
-					} else {
-						parent.right = null;
-					}
-			if( (p.left == null) || (p.right == null)) {
-				if(p.left != null) {
-					if(parent.left == p) {
-						parent.left = p.left;
-					} else {
-						parent.right = p.left;
-					}
-				} else {
-					if(parent.left == p) {
-						parent.left = p.right;
-					} else {
-						parent.right = p.right;
-					}
-				}
+		// 주어진 키값 item를 가진 노드
+		TreeNode p = root;
+		// 삭제할 노드의 부모 노드
+		TreeNode parent = p;
+		TreeNode q = null;
+		// 지울 노드를 찾아간다. 만약 찾지 못하면
+		// 에러 출력
+		while (p != null && p.item != item) {
+			parent = p;
+			if(p.item > item) {
+				p = p.left;
+			} else {
+				p = p.right;
 			}
-			if( (p.left!= null) && (p.right != null)) {
-				q= maxNode(p.left);
-				p.item = q.item;
-				deleteBST(p.left, p.item);
+			if(p == null) {
+				System.out.println("트리가 존재하지 않습니다.");
 			}
+		}
+
+		// 트리가 공백이면 공백 출력
+		if(p == null) {
+			return;
+		}
+		// 삭제할 노드가 마지막 노드(리프 노드)일 경우
+		if((p.left == null) && (p.right == null)) {
+			// p가 루트일 경우
+			// 루트삭제
+			if(p == root) {
+				//이렇게 하면 안됨 동기화가 안된다.
+				root = null;
+				
+				// 전체가 지워짐
+				//this.root = null;
+				
+				// 강제로 지움
+				//this.root.left.left = null;
+			}
+		}
+		// 삭제할 노드의 자식이 1개 일 경우
+		else if((p.left == null) || (p.right == null)) {
+			// 삭제되는 노드에 자식을 위치시킨다.
+			if(p.left != null) {
+				parent.left = p.left;
+			} else {
+				parent.right = p.right;
+			}
+		}
+		// 삭제할 노드의 자식이 2개일 경우
+		else if((p.left != null) && (p.right != null)) {
+			// 왼쪽 서브트리에서 최대 키값을 가진 원소를 찾는다.
+			q = maxNode(p.left);
+			p.item = q.item;
 			
-	}// end DeleteBST
-	
+			if(q == p.left)
+				p.left = p.left.left;
+			deleteBST(p.left, p.item);	
+		}
+	}
 	
 	// 최대 키 값 탐색
 	private TreeNode maxNode(TreeNode m) {
@@ -119,50 +153,55 @@ public class BST {
 		}
 	} // end maxNode
 	
-	// 입력 원소 값을 기준으로 2개의 트리로 분할
-	public void split(BST bBST, BST cBST, int x) {
-		BST Small = new BST();
-		BST Large = new BST();
-		
-		TreeNode S = Small.root; // Small의 순회 포인터
-		TreeNode L = Large.root; // Large의 순회 포인터
-		TreeNode P = this.root; // 분할하려는 BST의 순회 포인터
-//		System.out.println("this.root : "+ P.item);
-//		System.out.println("this.root.left : "+ P.left.item);
-		while(P != null) {
-			if(x == P.item) { // 해당 원소 발견 시
-//				System.out.println("test print");
-//
-//				System.out.println("L.item : "+ L.item);
-//				System.out.println("L.left.item : "+ L.left.item);
-//				System.out.println("S.item : "+ S.item);
-//				System.out.println("S.right.item : "+ S.right.item);
-//				
-				S.right = P.left; // 해당 노드의 좌측 서브 노드를 S 포인터의 우측 노드에 저장
-				//System.out.println("S.rignt : "+ S.right.item);
-				L.left = P.right; // 반대인 오른쪽 노드를 L 포인터의 좌측 노드에 저장
-				bBST.root = Small.root.right; // 여태 적립된 Small의 우측 서브트리를 bBST에 저장
-				cBST.root = Large.root.left;  // 여태 적립한 Large의 좌측 서브트리를 cBST에  저장
-				System.out.println("입력 원소 "+x+"가 원본 BST에 있습니다.");
-			} else if (x < P.item) { // 입력 원소 x가 현재 포인터 P의 키값보다 작은 경우
-				L.left = P;  // L 포인트의 좌측 노드에 현재 P 노드 연결
-				L = P; 		 // 저장했으니 L은 다음 노드로 한 칸 이동하고
-				P = P.left;  // P 역시 더 작은 값을 찾기 위해 좌측 서브노드로 한 칸 이동한다.
-			} else { // 입력 원소 x가 현재 포인터 P의 item 값보다 큰 경우
-				S.right = P; // S 포인트의 우측 서브노드에 P 노드 적립
-				S = P;   	 // S 포인트를 다음 칸으로 이동
-				P = P.right; // P 포인트 역시 전달을 했으니 더 큰 값을 찾아 우측 서브노드로 이동
-			}
+	
+	
+	
 
-			
-			L.left = null;
-			S.right = null;
-			bBST.root = Small.root.right;
-			cBST.root = Large.root.left;
-			System.out.println("입력한 원소 "+ x + "가 원본 트리에 없습니다.");
-		}
+	// 분할
+	public void split(BST bBST, BST cBST, int x) {
+		// 분할된 트리를 넣을 빈 트리 2개를 만든다
+		TreeNode Small = new TreeNode();
+		TreeNode Large = new TreeNode();
 		
-	}// end split
+		// 위치를 알려줄 포인터 3개를 만든다.
+		TreeNode S = Small;
+		TreeNode L = Large;
+		TreeNode P = this.root;
+		
+		
+		// root 가 공백이 아닐때 까지
+		while(P != null) {
+			// 인수와 root가 일치한다면
+			if (x == P.item) {
+				// 옮겨둔 p.left(작은수트리)를 S.right에
+				S.right = P.left;
+				// 옮겨둔 p.right(큰수 트리)를 L.left에 넣는다.
+				L.left = P.right;
+				// 그리고 미리 만든 빈 트리에 각각 넣는다.
+				bBST.root = Small.right;
+				cBST.root = Large.left;
+				break;
+			} else if(x < P.item) {
+				// 인수가 root의 item 보다 작으므로 왼쪽으로 넘어간다.
+				L.left = P;
+				L = P;
+				P = P.left;
+			} else {
+				// 인수가 root의 item 보다 크므로 오른쪽으로 넘어간다.
+				S.right = P;
+				S = P;
+				P = P.right;
+			}
+		}
+		// null 처리를 안해주면 오류가 날 수도 있다.
+		L.left = null;
+		S.right = null;
+		bBST.root = Small.right;
+		cBST.root = Large.left;
+	}
+	
+	
+	
 	
 	// 트리 출력 함수
 	public void show() {
